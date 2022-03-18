@@ -59,6 +59,7 @@ class RealESRGAN(UiRealESRGAN):
         self._input_path: None | str | Path = None
         self._output_path: None | str | Path = None
         self._input_type: None | str = None
+        self._output_custom = False
 
         self._queue: Queue | None = None
         self._sub_process: Process | None = None
@@ -73,11 +74,11 @@ class RealESRGAN(UiRealESRGAN):
     def get_input_file(self):
         input_file = askopenfilename(title=_('Select Image File'), filetypes=FILE_TYPES)
         if input_file:
+            self._output_custom = False
             self._input_path = Path(input_file)
-            self._output_path = self._input_path.parent / f'{self._input_path.stem}-{self._mode}.{self._output_format}'
             self.input_path.set(self._input_path)
-            self.output_path.set(self._output_path)
             self._input_type = 'file'
+            self._set_output()
             self.ButtonOutputFile.configure(state='normal')
             self.ButtonOutputDir.configure(state='disabled')
 
@@ -86,11 +87,11 @@ class RealESRGAN(UiRealESRGAN):
     def get_input_dir(self):
         input_dir = askdirectory(title=_('Select Images Folder'), mustexist=True)
         if input_dir:
+            self._output_custom = False
             self._input_path = Path(input_dir)
-            self._output_path = self._input_path.parent / f'{self._input_path.stem}-{self._mode}'
             self.input_path.set(self._input_path)
-            self.output_path.set(self._output_path)
             self._input_type = 'dir'
+            self._set_output()
             self.ButtonOutputFile.configure(state='disabled')
             self.ButtonOutputDir.configure(state='normal')
         self._toggle_start()
@@ -105,6 +106,7 @@ class RealESRGAN(UiRealESRGAN):
                 initialfile=self._output_path.stem if self._input_path else None
                 )
         if output_file:
+            self._output_custom = True
             self._output_path = Path(output_file)
             self._output_format = self._output_path.suffix[1:]
             self.output_path.set(self._output_path)
@@ -114,6 +116,7 @@ class RealESRGAN(UiRealESRGAN):
     def set_output_dir(self):
         output_dir = askdirectory(title=_('Set Output Folder'))
         if output_dir:
+            self._output_custom = True
             self._output_path = Path(output_dir)
             self.output_path.set(self._output_path)
         self._toggle_start()
@@ -126,11 +129,11 @@ class RealESRGAN(UiRealESRGAN):
 
     def set_mode(self, event=None):
         self._mode = self.mode.get()
-        if self._output_path and self._input_type == 'file':
-            self._output_path = self._output_path.parent / f'{self._input_path.stem}-{self._mode}.{self._output_format}'
-        else:
-            self._output_path = self._input_path.parent / f'{self._input_path.name}-{self._mode}'
-        self.output_path.set(self._output_path)
+        self._set_output()
+
+    def set_tta_mode(self):
+        self._tta_mode = self.tta_mode.get()
+        self._set_output()
 
     def start(self):
         if not self._realesrgan_exec:
@@ -169,6 +172,19 @@ class RealESRGAN(UiRealESRGAN):
             self.TextMessage.configure(state='disabled')
             # self.TextMessage.update_idletasks()
         self._enable_widgets()
+
+    def _set_output(self):
+        if self._output_custom:
+            return None
+
+        output_name = f'{self._input_path.stem}-{self._mode}'
+        if self._tta_mode:
+            output_name = f'{output_name}-tta'
+        if self._input_type == 'file':
+            output_name = f'{output_name}.{self._output_format}'
+
+        self._output_path = self._input_path.parent / output_name
+        self.output_path.set(self._output_path)
 
     def _get_messages(self):
         self.TextMessage.configure(state='normal')

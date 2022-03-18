@@ -77,7 +77,7 @@ class UiRealESRGAN(ttk.Frame):
         self.ComboboxMode.bind('<<ComboboxSelected>>', self.set_mode, add='')
         self.CheckButtonTTAMode = ttk.Checkbutton(self.FrameOption)
         self.tta_mode = tk.BooleanVar(value=False)
-        self.CheckButtonTTAMode.configure(text=_('TTA Mode'), variable=self.tta_mode)
+        self.CheckButtonTTAMode.configure(text=_('TTA Mode'), variable=self.tta_mode, command=self.set_tta_mode)
         self.CheckButtonTTAMode.pack(ipadx='2', padx='4', pady='4', side='left')
         self.FrameOption.configure(height='200', text=_('Option'), width='200')
         self.FrameOption.pack(fill='x', padx='4', pady='4', side='top')
@@ -116,4 +116,7 @@ class UiRealESRGAN(ttk.Frame):
         pass
 
     def set_mode(self, event=None):
+        pass
+
+    def set_tta_mode(self):
         pass
