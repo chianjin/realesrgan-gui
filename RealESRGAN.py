@@ -1,7 +1,6 @@
 import gettext
 import sys
-import tkinter as tk
-from multiprocessing import Process, Queue
+from threading import Thread, Lock
 from pathlib import Path
 from subprocess import PIPE, Popen, STDOUT
 from tkinter.filedialog import askdirectory, askopenfilename, asksaveasfilename
@@ -61,8 +60,10 @@ class RealESRGAN(UiRealESRGAN):
         self._input_type: None | str = None
         self._output_custom = False
 
-        self._queue: Queue | None = None
-        self._sub_process: Process | None = None
+        self._message = ''
+        self._message_lock = Lock()
+        self._process: Popen | None = None
+        self._thread: Thread | None = None
 
         if REALESRGAN_EXEC.exists():
             self._realesrgan_exec = REALESRGAN_EXEC
@@ -156,21 +157,17 @@ class RealESRGAN(UiRealESRGAN):
         self.TextMessage.insert('end', '\n')
         self.TextMessage.configure(state='disabled')
 
-        self._queue = Queue()
-        self._sub_process = Process(
-                target=realesrgan,
-                args=(self._queue, cmd_line)
-                )
-        self._sub_process.start()
-        self._get_messages()
+        self._thread = Thread(target=self._realesrgan, args=(cmd_line,), daemon=True)
+        self._thread.start()
+        self._update_message()
 
     def stop(self):
-        if self._sub_process and self._sub_process.is_alive():
-            self._sub_process.terminate()
+        if self._process:
+            self._process.kill()
             self.TextMessage.configure(state='normal')
-            self.TextMessage.insert('end', _('!!!!!!!!!! User Terminate !!!!!!!!!!\n'))
+            self.TextMessage.insert('end', '========== Stop ==========\n')
             self.TextMessage.configure(state='disabled')
-            # self.TextMessage.update_idletasks()
+            self._process = None
         self._enable_widgets()
 
     def _set_output(self):
@@ -186,19 +183,18 @@ class RealESRGAN(UiRealESRGAN):
         self._output_path = self._input_path.parent / output_name
         self.output_path.set(self._output_path)
 
-    def _get_messages(self):
-        self.TextMessage.configure(state='normal')
-        while not self._queue.empty():
-            self.TextMessage.insert('end', self._queue.get())
+    def _update_message(self):
+        message = ''
+        with self._message_lock:
+            message, self._message = self._message, ''
+
+        if message:
+            self.TextMessage.configure(state='normal')
+            self.TextMessage.insert('end', message)
             self.TextMessage.see('end')
-        self.TextMessage.configure(state='disabled')
-
-        if self._sub_process.is_alive():
-            self.TextMessage.after(500, self._get_messages)
-        else:
-            self._enable_widgets()
-
-        # self.TextMessage.update_idletasks()
+            self.TextMessage.configure(state='disabled')
+        if self._thread.is_alive():
+            self.TextMessage.after(500, self._update_message)
 
     def _enable_widgets(self, enable=True):
         buttons = (
@@ -245,14 +241,15 @@ class RealESRGAN(UiRealESRGAN):
                     )
             self.TextMessage.configure(state='disabled')
 
-
-def realesrgan(queue: Queue, cmd_line):
-    with Popen(cmd_line, stdout=PIPE, stderr=STDOUT, creationflags=134217728) as sub_process:
-        while True:
-            return_code = sub_process.poll()
-            if return_code is None:
-                queue.put(sub_process.stdout.readline())
-            else:
-                queue.put(sub_process.stdout.read())
-                break
-    return return_code
+    def _realesrgan(self, cmd_line):
+        self._process = Popen(cmd_line, stdout=PIPE, stderr=STDOUT, creationflags=134217728, encoding='UTF-8')
+        try:
+            while self._process.poll() is None:
+                message = self._process.stdout.readline()
+                with self._message_lock:
+                    self._message += message
+            self._process = None
+        except AttributeError:
+            pass
+        finally:
+            self._enable_widgets()
