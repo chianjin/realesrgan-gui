@@ -1,3 +1,4 @@
+from pathlib import Path
 import tkinter as tk
 import tkinter.ttk as ttk
 
