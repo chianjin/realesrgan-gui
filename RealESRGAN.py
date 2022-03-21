@@ -2,12 +2,10 @@ import gettext
 import sys
 from threading import Thread, Lock
 from pathlib import Path
-from subprocess import PIPE, Popen, STDOUT
+from subprocess import PIPE, Popen, STDOUT, CREATE_NO_WINDOW
 from tkinter.filedialog import askdirectory, askopenfilename, asksaveasfilename
 
 from UiRealESRGAN import UiRealESRGAN
-
-CREATE_NO_WINDOW = 134217728  # win32process.134217728
 
 if 'win' in sys.platform:
     REALESRGAN_EXEC = Path('realesrgan/realesrgan-ncnn-vulkan.exe')
@@ -242,7 +240,7 @@ class RealESRGAN(UiRealESRGAN):
             self.TextMessage.configure(state='disabled')
 
     def _realesrgan(self, cmd_line):
-        self._process = Popen(cmd_line, stdout=PIPE, stderr=STDOUT, creationflags=134217728, encoding='UTF-8')
+        self._process = Popen(cmd_line, stdout=PIPE, stderr=STDOUT, creationflags=CREATE_NO_WINDOW, encoding='UTF-8')
         try:
             while self._process.poll() is None:
                 message = self._process.stdout.readline()
