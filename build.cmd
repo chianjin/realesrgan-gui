@@ -1,3 +1,4 @@
+call .venv\Scripts\activate.bat
 nuitka --show-progress --show-memory --standalone --clang --mingw64 --windows-disable-console^
  --windows-icon-from-ico=realesrgan.ico --include-data-dir=realesrgan=realesrgan^
  --include-data-dir=locale=locale --include-data-file=realesrgan.png=realesrgan.png^
