@@ -4,6 +4,7 @@ from threading import Thread, Lock
 from pathlib import Path
 from subprocess import PIPE, Popen, STDOUT, CREATE_NO_WINDOW
 from tkinter.filedialog import askdirectory, askopenfilename, asksaveasfilename
+from typing import Union
 
 from UiRealESRGAN import UiRealESRGAN
 
@@ -40,28 +41,30 @@ class RealESRGAN(UiRealESRGAN):
         self._tta_mode = False
         self.tta_mode.set(self._tta_mode)
 
-        self.ComboboxOutputFormat.configure(values='png jpg webp')
-        self._output_format = 'png'
-        self.output_format.set(self._output_format)
+        self.ComboboxFormat.configure(values='png jpg webp')
+        self._format = 'png'
+        self.format.set(self._format)
+        self.ComboboxFormat.configure(state='disabled')
 
         self.ComboboxMode.configure(values=MODE)
         self._mode = MODE[0]
         self.mode.set(self._mode)
+        self.ComboboxMode.configure(state='disabled')
 
+        self.CheckButtonTTAMode.configure(state='disabled')
         self.ButtonStart.configure(state='disabled')
-
         self.ButtonOutputFile.configure(state='disabled')
-        self.ButtonOutputDir.configure(state='disabled')
+        self.ButtonOutputFolder.configure(state='disabled')
 
-        self._input_path: None | str | Path = None
-        self._output_path: None | str | Path = None
-        self._input_type: None | str = None
+        self._input_path: Union[None, str, Path] = None
+        self._output_path: Union[None, str, Path] = None
+        self._input_type: Union[None, str] = None
         self._output_custom = False
 
         self._message = ''
         self._message_lock = Lock()
-        self._process: Popen | None = None
-        self._thread: Thread | None = None
+        self._process: Union[Popen, None] = None
+        self._thread: Union[Thread, None] = None
 
         if REALESRGAN_EXEC.exists():
             self._realesrgan_exec = REALESRGAN_EXEC
@@ -79,27 +82,27 @@ class RealESRGAN(UiRealESRGAN):
             self._input_type = 'file'
             self._set_output()
             self.ButtonOutputFile.configure(state='normal')
-            self.ButtonOutputDir.configure(state='disabled')
+            self.ButtonOutputFolder.configure(state='disabled')
 
         self._toggle_start()
 
-    def get_input_dir(self):
-        input_dir = askdirectory(title=_('Select Images Folder'), mustexist=True)
-        if input_dir:
+    def get_input_folder(self):
+        input_folder = askdirectory(title=_('Select Images Folder'), mustexist=True)
+        if input_folder:
             self._output_custom = False
-            self._input_path = Path(input_dir)
+            self._input_path = Path(input_folder)
             self.input_path.set(self._input_path)
             self._input_type = 'dir'
             self._set_output()
             self.ButtonOutputFile.configure(state='disabled')
-            self.ButtonOutputDir.configure(state='normal')
+            self.ButtonOutputFolder.configure(state='normal')
         self._toggle_start()
 
     def set_output_file(self):
         output_file = asksaveasfilename(
                 title=_('Set Output File'),
                 confirmoverwrite=True,
-                defaultextension=f'.{self._output_format}',
+                defaultextension=f'.{self._format}',
                 filetypes=FILE_TYPES,
                 initialdir=self._input_path.parent if self._input_path else None,
                 initialfile=self._output_path.stem if self._input_path else None
@@ -107,23 +110,23 @@ class RealESRGAN(UiRealESRGAN):
         if output_file:
             self._output_custom = True
             self._output_path = Path(output_file)
-            self._output_format = self._output_path.suffix[1:]
+            self._format = self._output_path.suffix[1:]
             self.output_path.set(self._output_path)
-            self.output_format.set(self._output_format)
+            self.format.set(self._format)
         self._toggle_start()
 
-    def set_output_dir(self):
-        output_dir = askdirectory(title=_('Set Output Folder'))
-        if output_dir:
+    def set_output_folder(self):
+        output_folder = askdirectory(title=_('Set Output Folder'))
+        if output_folder:
             self._output_custom = True
-            self._output_path = Path(output_dir)
+            self._output_path = Path(output_folder)
             self.output_path.set(self._output_path)
         self._toggle_start()
 
-    def set_output_format(self, event=None):
-        self._output_format = self.output_format.get()
+    def set_format(self, event=None):
+        self._format = self.format.get()
         if self._output_path and self._input_type == 'file':
-            self._output_path = self._output_path.parent / f'{self._output_path.stem}.{self._output_format}'
+            self._output_path = self._output_path.parent / f'{self._output_path.stem}.{self._format}'
             self.output_path.set(self._output_path)
 
     def set_mode(self, event=None):
@@ -142,8 +145,8 @@ class RealESRGAN(UiRealESRGAN):
         if self._input_type == 'dir' and not self._output_path.exists():
             self._output_path.mkdir()
         cmd_line = [self._realesrgan_exec, '-i', self._input_path, '-o', self._output_path, '-v']
-        if self._input_type == 'dir' and self._output_format != 'png':
-            cmd_line.extend(('-f', self._output_format))
+        if self._input_type == 'dir' and self._format != 'png':
+            cmd_line.extend(('-f', self._format))
         if self._mode != MODE[0]:
             cmd_line.extend(('-n', self._mode))
         if self._tta_mode:
@@ -176,7 +179,7 @@ class RealESRGAN(UiRealESRGAN):
         if self._tta_mode:
             output_name = f'{output_name}-tta'
         if self._input_type == 'file':
-            output_name = f'{output_name}.{self._output_format}'
+            output_name = f'{output_name}.{self._format}'
 
         self._output_path = self._input_path.parent / output_name
         self.output_path.set(self._output_path)
@@ -198,15 +201,15 @@ class RealESRGAN(UiRealESRGAN):
         buttons = (
                 self.ButtonStart,
                 self.ButtonInputFile,
-                self.ButtonInputDir,
+                self.ButtonInputFolder,
                 self.ButtonOutputFile,
-                self.ButtonOutputDir,
+                self.ButtonOutputFolder,
                 self.CheckButtonTTAMode,
-                self.EntryInput,
-                self.EntryOutput,
+                self.EntryInputPath,
+                self.EntryOutputPath,
                 )
         combobox = (
-                self.ComboboxOutputFormat,
+                self.ComboboxFormat,
                 self.ComboboxMode,
                 )
         if enable:
@@ -222,8 +225,14 @@ class RealESRGAN(UiRealESRGAN):
     def _toggle_start(self):
         if self._input_path and self._input_path.exists() and self._output_path:
             self.ButtonStart.configure(state='normal')
+            self.ComboboxFormat.configure(state='readonly')
+            self.ComboboxMode.configure(state='readonly')
+            self.CheckButtonTTAMode.configure(state='normal')
         else:
             self.ButtonStart.configure(state='disabled')
+            self.ComboboxFormat.configure(state='disabled')
+            self.ComboboxMode.configure(state='disabled')
+            self.CheckButtonTTAMode.configure(state='disabled')
 
     def _check_exec(self):
         if not self._realesrgan_exec:
@@ -240,7 +249,7 @@ class RealESRGAN(UiRealESRGAN):
             self.TextMessage.configure(state='disabled')
 
     def _realesrgan(self, cmd_line):
-        self._process = Popen(cmd_line, stdout=PIPE, stderr=STDOUT, creationflags=CREATE_NO_WINDOW, encoding='UTF-8')
+        self._process = Popen(cmd_line, stdout=PIPE, stderr=STDOUT, encoding='UTF-8')
         try:
             while self._process.poll() is None:
                 message = self._process.stdout.readline()

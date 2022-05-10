@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-03-17 17:25+0800\n"
-"PO-Revision-Date: 2022-03-17 17:25+0800\n"
+"POT-Creation-Date: 2022-05-10 20:34+0800\n"
+"PO-Revision-Date: 2022-05-10 20:35+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_CN\n"
@@ -20,43 +20,39 @@ msgstr ""
 "X-Poedit-SearchPath-1: RealESRGAN-GUI.py\n"
 "X-Poedit-SearchPath-2: UiRealESRGAN.py\n"
 
-#: RealESRGAN.py:18
+#: RealESRGAN.py:19
 msgid "Image File"
 msgstr "图像文件"
 
-#: RealESRGAN.py:19
+#: RealESRGAN.py:20
 msgid "PNG Image"
 msgstr "PNG 图像"
 
-#: RealESRGAN.py:20
+#: RealESRGAN.py:21
 msgid "JPEG Image"
 msgstr "JPEG 图像"
 
-#: RealESRGAN.py:21
+#: RealESRGAN.py:22
 msgid "Webp Image"
 msgstr "Webp 图像"
 
-#: RealESRGAN.py:71
+#: RealESRGAN.py:77
 msgid "Select Image File"
 msgstr "选择图像文件"
 
-#: RealESRGAN.py:84
+#: RealESRGAN.py:90
 msgid "Select Images Folder"
 msgstr "选择图像文件夹"
 
-#: RealESRGAN.py:97
+#: RealESRGAN.py:103
 msgid "Set Output File"
 msgstr "设定输出文件"
 
-#: RealESRGAN.py:112
+#: RealESRGAN.py:119
 msgid "Set Output Folder"
 msgstr "设定输出文件夹"
 
-#: RealESRGAN.py:164
-msgid "!!!!!!!!!! User Terminate !!!!!!!!!!\n"
-msgstr "!!!!!!!!!! 用户停止 !!!!!!!!!!\n"
-
-#: RealESRGAN.py:219
+#: RealESRGAN.py:243
 msgid ""
 "realesrgan-ncnn-vulkan executable file not found! \n"
 "================================================= \n"
@@ -68,49 +64,54 @@ msgstr ""
 "请从 https://github.com/xinntao/Real-ESRGAN 下载，并释放至 realesrgan 文件"
 "夹。"
 
-#: UiRealESRGAN.py:20
+#: UiRealESRGAN.py:22
 msgid "Start"
 msgstr "开始"
 
-#: UiRealESRGAN.py:24
+#: UiRealESRGAN.py:26
 msgid "Stop"
 msgstr "停止"
 
-#: UiRealESRGAN.py:37 UiRealESRGAN.py:52
+#: UiRealESRGAN.py:41 UiRealESRGAN.py:58
 msgid "Select File"
 msgstr "选择文件"
 
-#: UiRealESRGAN.py:41 UiRealESRGAN.py:56
+#: UiRealESRGAN.py:45 UiRealESRGAN.py:62
 msgid "Select Folder"
 msgstr "选择文件夹"
 
-#: UiRealESRGAN.py:44
+#: UiRealESRGAN.py:48
 msgid "Input"
 msgstr "输入"
 
-#: UiRealESRGAN.py:59
+#: UiRealESRGAN.py:65
 msgid "Output"
 msgstr "输出"
 
-#: UiRealESRGAN.py:63
-msgid "Output Format"
+#: UiRealESRGAN.py:70
+#, fuzzy
+#| msgid "Output Format"
+msgid "Format"
 msgstr "输出格式"
 
-#: UiRealESRGAN.py:71
+#: UiRealESRGAN.py:83
 msgid "Mode"
 msgstr "模型"
 
-#: UiRealESRGAN.py:80
+#: UiRealESRGAN.py:96
 msgid "TTA Mode"
 msgstr "TTA 模式"
 
-#: UiRealESRGAN.py:82
+#: UiRealESRGAN.py:99
 msgid "Option"
 msgstr "选项"
 
-#: UiRealESRGAN.py:92
+#: UiRealESRGAN.py:111
 msgid "Message"
 msgstr "消息"
+
+#~ msgid "!!!!!!!!!! User Terminate !!!!!!!!!!\n"
+#~ msgstr "!!!!!!!!!! 用户停止 !!!!!!!!!!\n"
 
 #~ msgid "Set filename to save"
 #~ msgstr "设置保存文件名"
