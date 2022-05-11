@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-05-10 20:34+0800\n"
-"PO-Revision-Date: 2022-05-10 20:35+0800\n"
+"POT-Creation-Date: 2022-05-11 09:21+0800\n"
+"PO-Revision-Date: 2022-05-11 09:33+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_CN\n"
@@ -64,6 +64,20 @@ msgstr ""
 "请从 https://github.com/xinntao/Real-ESRGAN 下载，并释放至 realesrgan 文件"
 "夹。"
 
+#: RealESRGAN.py:263
+msgid ""
+"====================================\n"
+"Something wrong, the error code is {}.\n"
+"Please run the above commandline directly in Terminal,\n"
+"check whether it can run correctly.\n"
+"===================================="
+msgstr ""
+"====================================\n"
+"程序出错，错误代码：{}。\n"
+"请在终端中直接运行上述代码，\n"
+"检查是否能够正确运行。\n"
+"===================================="
+
 #: UiRealESRGAN.py:22
 msgid "Start"
 msgstr "开始"
@@ -89,10 +103,8 @@ msgid "Output"
 msgstr "输出"
 
 #: UiRealESRGAN.py:70
-#, fuzzy
-#| msgid "Output Format"
 msgid "Format"
-msgstr "输出格式"
+msgstr "格式"
 
 #: UiRealESRGAN.py:83
 msgid "Mode"

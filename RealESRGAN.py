@@ -255,6 +255,20 @@ class RealESRGAN(UiRealESRGAN):
                 message = self._process.stdout.readline()
                 with self._message_lock:
                     self._message += message
+            if self._process.returncode:
+                self.TextMessage.configure(state='normal')
+                self.TextMessage.insert(
+                        'end',
+                        _(
+                                '====================================\n'
+                                'Something wrong, the error code is {}.\n'
+                                'Please run the above commandline directly in Terminal,\n'
+                                'check whether it can run correctly.\n'
+                                '===================================='
+                                ).format(self._process.returncode)
+
+                        )
+                self.TextMessage.configure(state='disabled')
             self._process = None
         except AttributeError:
             pass

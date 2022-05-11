@@ -101,7 +101,7 @@ class UiRealESRGAN(ttk.Frame):
         self.FrameMessage = ttk.Labelframe(self)
         self.FrameText = ttk.Frame(self.FrameMessage)
         self.TextMessage = tk.Text(self.FrameText)
-        self.TextMessage.configure(font="TkFixedFont", height="10", width="50")
+        self.TextMessage.configure(font='{Microsoft Yahei Mono} 10 {}', height="10", width="50")
         self.TextMessage.pack(expand="true", fill="both", side="left")
         self.ScrollBarMessage = ttk.Scrollbar(self.FrameText)
         self.ScrollBarMessage.configure(orient="vertical")
