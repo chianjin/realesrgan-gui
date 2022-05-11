@@ -56,6 +56,9 @@ class RealESRGAN(UiRealESRGAN):
         self.ButtonOutputFile.configure(state='disabled')
         self.ButtonOutputFolder.configure(state='disabled')
 
+        self.TextMessage.configure(yscrollcommand=self.ScrollBarMessage.set)
+        self.ScrollBarMessage.configure(command=self.TextMessage.yview)
+
         self._input_path: Union[None, str, Path] = None
         self._output_path: Union[None, str, Path] = None
         self._input_type: Union[None, str] = None
