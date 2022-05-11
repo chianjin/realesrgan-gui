@@ -252,7 +252,7 @@ class RealESRGAN(UiRealESRGAN):
             self.TextMessage.configure(state='disabled')
 
     def _realesrgan(self, cmd_line):
-        self._process = Popen(cmd_line, stdout=PIPE, stderr=STDOUT, encoding='UTF-8')
+        self._process = Popen(cmd_line, stdout=PIPE, stderr=STDOUT, creationflags=CREATE_NO_WINDOW, encoding='UTF-8')
         try:
             while self._process.poll() is None:
                 message = self._process.stdout.readline()
