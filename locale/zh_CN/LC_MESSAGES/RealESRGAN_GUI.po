@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-05-11 09:21+0800\n"
-"PO-Revision-Date: 2022-05-11 09:33+0800\n"
+"POT-Creation-Date: 2022-05-11 20:50+0800\n"
+"PO-Revision-Date: 2022-05-11 20:52+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_CN\n"
@@ -36,47 +36,45 @@ msgstr "JPEG 图像"
 msgid "Webp Image"
 msgstr "Webp 图像"
 
-#: RealESRGAN.py:77
+#: RealESRGAN.py:80
 msgid "Select Image File"
 msgstr "选择图像文件"
 
-#: RealESRGAN.py:90
+#: RealESRGAN.py:93
 msgid "Select Images Folder"
 msgstr "选择图像文件夹"
 
-#: RealESRGAN.py:103
+#: RealESRGAN.py:106
 msgid "Set Output File"
 msgstr "设定输出文件"
 
-#: RealESRGAN.py:119
+#: RealESRGAN.py:122
 msgid "Set Output Folder"
 msgstr "设定输出文件夹"
 
-#: RealESRGAN.py:243
+#: RealESRGAN.py:246
 msgid ""
 "realesrgan-ncnn-vulkan executable file not found! \n"
-"================================================= \n"
 "Please download from https://github.com/xinntao/Real-ESRGAN and extract to "
 "realesrgan folder."
 msgstr ""
 "未发现 realesrgan-ncnn-vulkan 可执行文件！ \n"
-"================================================= \n"
 "请从 https://github.com/xinntao/Real-ESRGAN 下载，并释放至 realesrgan 文件"
 "夹。"
 
-#: RealESRGAN.py:263
+#: RealESRGAN.py:261
+msgid "realesrgan-ncnn-vulkan failed! \n"
+msgstr "realesrgan-ncnn-vulkan 运行出错! \n"
+
+#: RealESRGAN.py:278
 msgid ""
-"====================================\n"
 "Something wrong, the error code is {}.\n"
 "Please run the above commandline directly in Terminal,\n"
 "check whether it can run correctly.\n"
-"===================================="
 msgstr ""
-"====================================\n"
 "程序出错，错误代码：{}。\n"
 "请在终端中直接运行上述代码，\n"
 "检查是否能够正确运行。\n"
-"===================================="
 
 #: UiRealESRGAN.py:22
 msgid "Start"
