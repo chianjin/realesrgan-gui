@@ -244,7 +244,6 @@ class RealESRGAN(UiRealESRGAN):
                     'end',
                     _(
                             'realesrgan-ncnn-vulkan executable file not found! \n'
-                            '================================================= \n'
                             'Please download from https://github.com/xinntao/Real-ESRGAN '
                             'and extract to realesrgan folder.'
                             )
@@ -252,7 +251,19 @@ class RealESRGAN(UiRealESRGAN):
             self.TextMessage.configure(state='disabled')
 
     def _realesrgan(self, cmd_line):
-        self._process = Popen(cmd_line, stdout=PIPE, stderr=STDOUT, creationflags=CREATE_NO_WINDOW, encoding='UTF-8')
+        try:
+            self._process = Popen(
+                cmd_line, stdout=PIPE, stderr=STDOUT, creationflags=CREATE_NO_WINDOW, encoding='UTF-8'
+                )
+        except OSError as e:
+            self.TextMessage.configure(state='normal')
+            self.TextMessage.insert('end', '\n================================================= \n')
+            self.TextMessage.insert('end', _('realesrgan-ncnn-vulkan failed! \n'))
+            self.TextMessage.insert('end', repr(e))
+            self.TextMessage.insert('end', '\n================================================= \n')
+            self.TextMessage.configure(state='disabled')
+            return None
+
         try:
             while self._process.poll() is None:
                 message = self._process.stdout.readline()
@@ -260,17 +271,17 @@ class RealESRGAN(UiRealESRGAN):
                     self._message += message
             if self._process.returncode:
                 self.TextMessage.configure(state='normal')
+                self.TextMessage.insert('end', '\n================================================= \n')
                 self.TextMessage.insert(
                         'end',
                         _(
-                                '====================================\n'
                                 'Something wrong, the error code is {}.\n'
                                 'Please run the above commandline directly in Terminal,\n'
                                 'check whether it can run correctly.\n'
-                                '===================================='
                                 ).format(self._process.returncode)
 
                         )
+                self.TextMessage.insert('end', '================================================= \n')
                 self.TextMessage.configure(state='disabled')
             self._process = None
         except AttributeError:

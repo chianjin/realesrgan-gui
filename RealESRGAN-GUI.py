@@ -1,12 +1,12 @@
 import gettext
 import os
-import sys
+import platform
 import tkinter as tk
 
 import locale
 from RealESRGAN import RealESRGAN
 
-if 'win' in sys.platform:
+if platform.system() == 'Windows':
     os.environ['LANGUAGE'] = locale.getdefaultlocale()[0]
 gettext.install(domain='RealESRGAN_GUI', localedir='locale')
 
@@ -37,9 +37,8 @@ class RealESRGANGui(tk.Tk):
 
 
 if __name__ == '__main__':
-    if sys.platform == 'win32':
+    if platform.system() == 'Windows' and int(platform.version().split('.')[0]) >= 10:
         import ctypes
-
         ctypes.windll.shcore.SetProcessDpiAwareness(1)
 
     RealESRGANGui().run()
