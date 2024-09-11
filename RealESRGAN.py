@@ -166,7 +166,7 @@ class RealESRGAN(UiRealESRGAN):
     def stop(self):
         self._process.kill()
         self._process.wait()
-        self.TextMessage.insert(tk.END, _('\nrealesrgan-ncnn-vulkan process terminated.\n'))
+        self.TextMessage.insert(tk.END, _('====== realesrgan-ncnn-vulkan process terminated. ======\n'))
         self.ButtonStart.configure(state=tk.NORMAL)
         self.ButtonStop.configure(state=tk.DISABLED)
 
@@ -255,9 +255,9 @@ class RealESRGAN(UiRealESRGAN):
             self.TextMessage.insert(
                     'end',
                     _(
-                            'realesrgan-ncnn-vulkan executable file not found! \n'
-                            'Please download from https://github.com/xinntao/Real-ESRGAN '
-                            'and extract to realesrgan folder.'
-                            )
+                        'realesrgan-ncnn-vulkan executable file not found! \n'
+                        'Please download from https://github.com/xinntao/Real-ESRGAN '
+                        'and extract to realesrgan folder.\n'
                     )
+                )
             self.TextMessage.configure(state='disabled')

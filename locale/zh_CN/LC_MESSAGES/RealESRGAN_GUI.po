@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-05-11 20:50+0800\n"
-"PO-Revision-Date: 2022-05-11 20:52+0800\n"
+"POT-Creation-Date: 2024-09-11 16:19+0800\n"
+"PO-Revision-Date: 2024-09-11 16:20+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_CN\n"
@@ -14,33 +14,33 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.5\n"
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-SearchPath-0: RealESRGAN.py\n"
 "X-Poedit-SearchPath-1: RealESRGAN-GUI.py\n"
 "X-Poedit-SearchPath-2: UiRealESRGAN.py\n"
 
-#: RealESRGAN.py:19
+#: RealESRGAN.py:20
 msgid "Image File"
 msgstr "图像文件"
 
-#: RealESRGAN.py:20
+#: RealESRGAN.py:21
 msgid "PNG Image"
 msgstr "PNG 图像"
 
-#: RealESRGAN.py:21
+#: RealESRGAN.py:22
 msgid "JPEG Image"
 msgstr "JPEG 图像"
 
-#: RealESRGAN.py:22
+#: RealESRGAN.py:23
 msgid "Webp Image"
 msgstr "Webp 图像"
 
-#: RealESRGAN.py:80
+#: RealESRGAN.py:79
 msgid "Select Image File"
 msgstr "选择图像文件"
 
-#: RealESRGAN.py:93
+#: RealESRGAN.py:92
 msgid "Select Images Folder"
 msgstr "选择图像文件夹"
 
@@ -52,73 +52,84 @@ msgstr "设定输出文件"
 msgid "Set Output Folder"
 msgstr "设定输出文件夹"
 
-#: RealESRGAN.py:246
+#: RealESRGAN.py:153
+msgid "Create Folder"
+msgstr "新建文件夹"
+
+#: RealESRGAN.py:154
+msgid "Output folder dose not exists. Create it?"
+msgstr "输出文件夹不存在，是否创建？"
+
+#: RealESRGAN.py:169
+msgid "====== realesrgan-ncnn-vulkan process terminated. ======\n"
+msgstr "====== realesrgan-ncnn-vulkan 进程终止! ====== \n"
+
+#: RealESRGAN.py:258
 msgid ""
 "realesrgan-ncnn-vulkan executable file not found! \n"
 "Please download from https://github.com/xinntao/Real-ESRGAN and extract to "
-"realesrgan folder."
+"realesrgan folder.\n"
 msgstr ""
 "未发现 realesrgan-ncnn-vulkan 可执行文件！ \n"
 "请从 https://github.com/xinntao/Real-ESRGAN 下载，并释放至 realesrgan 文件"
-"夹。"
+"夹。\n"
 
-#: RealESRGAN.py:261
-msgid "realesrgan-ncnn-vulkan failed! \n"
-msgstr "realesrgan-ncnn-vulkan 运行出错! \n"
-
-#: RealESRGAN.py:278
-msgid ""
-"Something wrong, the error code is {}.\n"
-"Please run the above commandline directly in Terminal,\n"
-"check whether it can run correctly.\n"
-msgstr ""
-"程序出错，错误代码：{}。\n"
-"请在终端中直接运行上述代码，\n"
-"检查是否能够正确运行。\n"
-
-#: UiRealESRGAN.py:22
+#: UiRealESRGAN.py:26
 msgid "Start"
 msgstr "开始"
 
-#: UiRealESRGAN.py:26
+#: UiRealESRGAN.py:29
 msgid "Stop"
 msgstr "停止"
 
-#: UiRealESRGAN.py:41 UiRealESRGAN.py:58
-msgid "Select File"
-msgstr "选择文件"
-
-#: UiRealESRGAN.py:45 UiRealESRGAN.py:62
-msgid "Select Folder"
-msgstr "选择文件夹"
-
-#: UiRealESRGAN.py:48
+#: UiRealESRGAN.py:37
 msgid "Input"
 msgstr "输入"
 
-#: UiRealESRGAN.py:65
+#: UiRealESRGAN.py:45 UiRealESRGAN.py:61
+msgid "Select File"
+msgstr "选择文件"
+
+#: UiRealESRGAN.py:48 UiRealESRGAN.py:64
+msgid "Select Folder"
+msgstr "选择文件夹"
+
+#: UiRealESRGAN.py:53
 msgid "Output"
 msgstr "输出"
 
 #: UiRealESRGAN.py:70
-msgid "Format"
-msgstr "格式"
-
-#: UiRealESRGAN.py:83
-msgid "Mode"
-msgstr "模型"
-
-#: UiRealESRGAN.py:96
-msgid "TTA Mode"
-msgstr "TTA 模式"
-
-#: UiRealESRGAN.py:99
 msgid "Option"
 msgstr "选项"
 
-#: UiRealESRGAN.py:111
+#: UiRealESRGAN.py:73
+msgid "Scale"
+msgstr "倍数"
+
+#: UiRealESRGAN.py:83
+msgid "Format"
+msgstr "格式"
+
+#: UiRealESRGAN.py:94
+msgid "Model"
+msgstr "模型"
+
+#: UiRealESRGAN.py:107
+msgid "TTA Mode"
+msgstr "TTA 模式"
+
+#: UiRealESRGAN.py:115
 msgid "Message"
 msgstr "消息"
+
+#~ msgid ""
+#~ "Something wrong, the error code is {}.\n"
+#~ "Please run the above commandline directly in Terminal,\n"
+#~ "check whether it can run correctly.\n"
+#~ msgstr ""
+#~ "程序出错，错误代码：{}。\n"
+#~ "请在终端中直接运行上述代码，\n"
+#~ "检查是否能够正确运行。\n"
 
 #~ msgid "!!!!!!!!!! User Terminate !!!!!!!!!!\n"
 #~ msgstr "!!!!!!!!!! 用户停止 !!!!!!!!!!\n"

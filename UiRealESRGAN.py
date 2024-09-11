@@ -116,7 +116,7 @@ class UiRealESRGAN(ttk.Frame):
         ## Frame Text
         self.FrameText = ttk.Frame(self.FrameMessage)
         ## Text Message
-        self.TextMessage = tk.Text(self.FrameText, font='{Microsoft Yahei Mono} 10 {}', height="10", width=50)
+        self.TextMessage = tk.Text(self.FrameText, font='{Microsoft Yahei Mono} 10 {}', height=15, width=80)
         self.TextMessage.pack(expand=True, fill="both", side="left")
         self.ScrollBarMessage = ttk.Scrollbar(self.FrameText, orient="vertical")
         self.ScrollBarMessage.pack(expand=True, fill="y", side="top")
