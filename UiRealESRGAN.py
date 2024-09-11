@@ -32,7 +32,7 @@ class UiRealESRGAN(ttk.Frame):
         self.FrameButton.pack(padx="20", side="right")
         # Top Frame Pack
         self.FrameTop.pack(fill="x", side="top")
-        
+
         # Input Frame
         self.FrameInput = ttk.Labelframe(self, text=_("Input"))
         ## Input Path
@@ -65,7 +65,7 @@ class UiRealESRGAN(ttk.Frame):
         self.ButtonOutputFolder.pack(padx="4", pady="4", side="left")
         # Output Frame Pack
         self.FrameOutput.pack(fill="x", padx="4", pady="4", side="top")
-        
+
         # Option Frame
         self.FrameOption = ttk.Labelframe(self, text=_("Option"))
         ## Scale Frame
@@ -110,13 +110,13 @@ class UiRealESRGAN(ttk.Frame):
         self.CheckButtonTTAMode.pack(padx="4", pady="4", side="left")
         # Option Frame Pack
         self.FrameOption.pack(fill="x", padx="4", pady="4", side="top")
-        
+
         # Message Frame
         self.FrameMessage = ttk.Labelframe(self, text=_("Message"))
         ## Frame Text
         self.FrameText = ttk.Frame(self.FrameMessage)
         ## Text Message
-        self.TextMessage = tk.Text(self.FrameText, font='{Microsoft Yahei Mono} 10 {}', height=15, width=80)
+        self.TextMessage = tk.Text(self.FrameText, font='{Microsoft Yahei Mono} 10 {}', height=20, width=100)
         self.TextMessage.pack(expand=True, fill="both", side="left")
         self.ScrollBarMessage = ttk.Scrollbar(self.FrameText, orient="vertical")
         self.ScrollBarMessage.pack(expand=True, fill="y", side="top")
@@ -126,7 +126,7 @@ class UiRealESRGAN(ttk.Frame):
         self.FrameText.pack(expand=True, fill="both", padx="4", pady="4", side="top")
         # Frame Message Pack
         self.FrameMessage.pack(expand=True, fill="both", padx="4", pady="4", side="top")
-        
+
         # Self Frame
         self.pack(expand=True, fill="both", side="top")
 

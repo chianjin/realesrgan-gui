@@ -1,12 +1,11 @@
 import gettext
-import sys
-from threading import Thread
-from pathlib import Path
 import subprocess
+import sys
 import tkinter as tk
+from pathlib import Path
+from threading import Thread
 from tkinter.filedialog import askdirectory, askopenfilename, asksaveasfilename
 from tkinter.messagebox import askyesno
-from typing import Union
 
 from UiRealESRGAN import UiRealESRGAN
 
@@ -61,9 +60,9 @@ class RealESRGAN(UiRealESRGAN):
         self.ButtonOutputFile.configure(state='disabled')
         self.ButtonOutputFolder.configure(state='disabled')
 
-        self._input_path: Union[None, str, Path] = None
-        self._output_path: Union[None, str, Path] = None
-        self._input_type: Union[None, str] = None
+        self._input_path: None | str | Path = None
+        self._output_path: None | str | Path = None
+        self._input_type: None | str | Path = None
         self._output_custom = False
         self._is_folder = False
         self._process = None
@@ -159,6 +158,7 @@ class RealESRGAN(UiRealESRGAN):
 
         self.ButtonStart.configure(state= tk.DISABLED)
         self.ButtonStop.configure(state=tk.NORMAL)
+        self._enable_widgets(False)
         # Launch the process in a separate thread
         process_thread = Thread(target=self._run_process)
         process_thread.start()
@@ -169,6 +169,7 @@ class RealESRGAN(UiRealESRGAN):
         self.TextMessage.insert(tk.END, _('====== realesrgan-ncnn-vulkan process terminated. ======\n'))
         self.ButtonStart.configure(state=tk.NORMAL)
         self.ButtonStop.configure(state=tk.DISABLED)
+        self._enable_widgets(True)
 
     def _set_output(self):
         if self._output_custom:
@@ -200,7 +201,17 @@ class RealESRGAN(UiRealESRGAN):
 
         self.TextMessage.insert(tk.END, " ".join(command) + "\n")
 
-        self._process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+
+        self._process = subprocess.Popen(
+            command,
+            startupinfo=startupinfo,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1
+        )
         # Read and display real-time output in the GUI
         with self._process.stdout:
             for line in iter(self._process.stdout.readline, ''):
@@ -209,6 +220,8 @@ class RealESRGAN(UiRealESRGAN):
                 #self.master.update()
         # Enable the button after the process completes
         self.ButtonStart.configure(state=tk.NORMAL)
+        self.ButtonStop.configure(state=tk.DISABLED)
+        self._enable_widgets(True)
 
     def _enable_widgets(self, enable=True):
         buttons = (
@@ -222,6 +235,7 @@ class RealESRGAN(UiRealESRGAN):
                 self.EntryOutputPath,
                 )
         combobox = (
+                self.ComboboxScale,
                 self.ComboboxFormat,
                 self.ComboboxModel,
                 )
