@@ -1,17 +1,18 @@
 import gettext
 import sys
-from threading import Thread, Lock
+from threading import Thread
 from pathlib import Path
-from subprocess import PIPE, Popen, STDOUT, CREATE_NO_WINDOW
+import subprocess
+import tkinter as tk
 from tkinter.filedialog import askdirectory, askopenfilename, asksaveasfilename
+from tkinter.messagebox import askyesno
 from typing import Union
 
 from UiRealESRGAN import UiRealESRGAN
 
+REALESRGAN_EXEC = Path('realesrgan/realesrgan-ncnn-vulkan')
 if 'win' in sys.platform:
-    REALESRGAN_EXEC = Path('realesrgan/realesrgan-ncnn-vulkan.exe')
-else:
-    REALESRGAN_EXEC = Path('realesrgan/realesrgan-ncnn-vulkan')
+    REALESRGAN_EXEC = REALESRGAN_EXEC.with_suffix('.exe')
 
 gettext.install(domain='RealESRGAN_GUI', localedir='locale')
 
@@ -20,17 +21,15 @@ FILE_TYPES = (
         (_('PNG Image'), '*.png'),
         (_('JPEG Image'), '*.jpg;*.jpeg'),
         (_('Webp Image'), '*.webp')
-        )
+    )
 
-MODE = (
-        'realesrgan-x4plus',
-        'realesrgan-x4plus-anime',
-        'realesrnet-x4plus',
-        'RealESRGANv2-animevideo-xsx2',
-        'RealESRGANv2-animevideo-xsx4',
-        # 'RealESRGANv2-anime-xsx2',
-        # 'RealESRGANv2-anime-xsx4'
-        )
+MODEL = (
+        "realesrgan-x4plus",
+        "realesrgan-x4plus-anime",
+        "realesr-animevideov3-x2",
+        "realesr-animevideov3-x3",
+        "realesr-animevideov3-x4"
+    )
 
 
 class RealESRGAN(UiRealESRGAN):
@@ -38,36 +37,36 @@ class RealESRGAN(UiRealESRGAN):
         super(RealESRGAN, self).__init__(master=master, **kw)
 
         # set ui configure
-        self._tta_mode = False
+        self._tta_mode = 0
         self.tta_mode.set(self._tta_mode)
+
+        self.ComboboxScale.configure(values='2 3 4')
+        self._scale = 4
+        self.scale.set(self._scale)
+        self.ComboboxScale.configure(state='disable')
 
         self.ComboboxFormat.configure(values='png jpg webp')
         self._format = 'png'
         self.format.set(self._format)
         self.ComboboxFormat.configure(state='disabled')
 
-        self.ComboboxMode.configure(values=MODE)
-        self._mode = MODE[0]
-        self.mode.set(self._mode)
-        self.ComboboxMode.configure(state='disabled')
+        self.ComboboxModel.configure(values=MODEL)
+        self._model = MODEL[0]
+        self.model.set(self._model)
+        self.ComboboxModel.configure(state='disabled')
 
         self.CheckButtonTTAMode.configure(state='disabled')
         self.ButtonStart.configure(state='disabled')
+        self.ButtonStop.configure(state='disable')
         self.ButtonOutputFile.configure(state='disabled')
         self.ButtonOutputFolder.configure(state='disabled')
-
-        self.TextMessage.configure(yscrollcommand=self.ScrollBarMessage.set)
-        self.ScrollBarMessage.configure(command=self.TextMessage.yview)
 
         self._input_path: Union[None, str, Path] = None
         self._output_path: Union[None, str, Path] = None
         self._input_type: Union[None, str] = None
         self._output_custom = False
-
-        self._message = ''
-        self._message_lock = Lock()
-        self._process: Union[Popen, None] = None
-        self._thread: Union[Thread, None] = None
+        self._is_folder = False
+        self._process = None
 
         if REALESRGAN_EXEC.exists():
             self._realesrgan_exec = REALESRGAN_EXEC
@@ -93,6 +92,7 @@ class RealESRGAN(UiRealESRGAN):
         input_folder = askdirectory(title=_('Select Images Folder'), mustexist=True)
         if input_folder:
             self._output_custom = False
+            self._is_folder = True
             self._input_path = Path(input_folder)
             self.input_path.set(self._input_path)
             self._input_type = 'dir'
@@ -126,14 +126,16 @@ class RealESRGAN(UiRealESRGAN):
             self.output_path.set(self._output_path)
         self._toggle_start()
 
+    def set_scale(self, event=None):
+        self._scale = self.scale.get()
+        self._set_output()
+
     def set_format(self, event=None):
         self._format = self.format.get()
-        if self._output_path and self._input_type == 'file':
-            self._output_path = self._output_path.parent / f'{self._output_path.stem}.{self._format}'
-            self.output_path.set(self._output_path)
+        self._set_output()
 
-    def set_mode(self, event=None):
-        self._mode = self.mode.get()
+    def set_model(self, event=None):
+        self._model = self.model.get()
         self._set_output()
 
     def set_tta_mode(self):
@@ -144,41 +146,36 @@ class RealESRGAN(UiRealESRGAN):
         if not self._realesrgan_exec:
             return None
 
-        self._enable_widgets(False)
-        if self._input_type == 'dir' and not self._output_path.exists():
-            self._output_path.mkdir()
-        cmd_line = [self._realesrgan_exec, '-i', self._input_path, '-o', self._output_path, '-v']
-        if self._input_type == 'dir' and self._format != 'png':
-            cmd_line.extend(('-f', self._format))
-        if self._mode != MODE[0]:
-            cmd_line.extend(('-n', self._mode))
-        if self._tta_mode:
-            cmd_line.append('-x')
+        if self._is_folder:
+            output_folder = Path(self.output_path.get())
+            if not output_folder.exists():
+                if askyesno(
+                    title=_("Create Folder"),
+                    message=_("Output folder dose not exists. Create it?"),
+                ):
+                    output_folder.mkdir()
+                else:
+                    return None
 
-        self.TextMessage.configure(state='normal')
-        self.TextMessage.delete('0.0', 'end')
-        self.TextMessage.insert('end', ' '.join([str(arg) for arg in cmd_line]))
-        self.TextMessage.insert('end', '\n')
-        self.TextMessage.configure(state='disabled')
-
-        self._thread = Thread(target=self._realesrgan, args=(cmd_line,), daemon=True)
-        self._thread.start()
-        self._update_message()
+        self.ButtonStart.configure(state= tk.DISABLED)
+        self.ButtonStop.configure(state=tk.NORMAL)
+        # Launch the process in a separate thread
+        process_thread = Thread(target=self._run_process)
+        process_thread.start()
 
     def stop(self):
-        if self._process:
-            self._process.kill()
-            self.TextMessage.configure(state='normal')
-            self.TextMessage.insert('end', '========== Stop ==========\n')
-            self.TextMessage.configure(state='disabled')
-            self._process = None
-        self._enable_widgets()
+        self._process.kill()
+        self._process.wait()
+        self.TextMessage.insert(tk.END, _('\nrealesrgan-ncnn-vulkan process terminated.\n'))
+        self.ButtonStart.configure(state=tk.NORMAL)
+        self.ButtonStop.configure(state=tk.DISABLED)
 
     def _set_output(self):
         if self._output_custom:
             return None
 
-        output_name = f'{self._input_path.stem}-{self._mode}'
+        output_name = f'{self._input_path.stem}-{self._scale}x-{self._model}'
+        print(self._tta_mode)
         if self._tta_mode:
             output_name = f'{output_name}-tta'
         if self._input_type == 'file':
@@ -187,18 +184,31 @@ class RealESRGAN(UiRealESRGAN):
         self._output_path = self._input_path.parent / output_name
         self.output_path.set(self._output_path)
 
-    def _update_message(self):
-        message = ''
-        with self._message_lock:
-            message, self._message = self._message, ''
+    def _run_process(self):
+        command = [
+            str(REALESRGAN_EXEC),
+            "-i", self.input_path.get(),
+            "-o", self.output_path.get(),
+            "-s", self.scale.get(),
+            "-n", self.model.get(),
+            "-f", self.format.get(),
+            "-v"
+        ]
 
-        if message:
-            self.TextMessage.configure(state='normal')
-            self.TextMessage.insert('end', message)
-            self.TextMessage.see('end')
-            self.TextMessage.configure(state='disabled')
-        if self._thread.is_alive():
-            self.TextMessage.after(500, self._update_message)
+        if self.tta_mode.get():
+            command.append("-x")
+
+        self.TextMessage.insert(tk.END, " ".join(command) + "\n")
+
+        self._process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
+        # Read and display real-time output in the GUI
+        with self._process.stdout:
+            for line in iter(self._process.stdout.readline, ''):
+                self.TextMessage.insert(tk.END, line)
+                self.TextMessage.yview(tk.END)
+                #self.master.update()
+        # Enable the button after the process completes
+        self.ButtonStart.configure(state=tk.NORMAL)
 
     def _enable_widgets(self, enable=True):
         buttons = (
@@ -213,7 +223,7 @@ class RealESRGAN(UiRealESRGAN):
                 )
         combobox = (
                 self.ComboboxFormat,
-                self.ComboboxMode,
+                self.ComboboxModel,
                 )
         if enable:
             for w in buttons:
@@ -228,13 +238,15 @@ class RealESRGAN(UiRealESRGAN):
     def _toggle_start(self):
         if self._input_path and self._input_path.exists() and self._output_path:
             self.ButtonStart.configure(state='normal')
+            self.ComboboxScale.configure(state='readonly')
             self.ComboboxFormat.configure(state='readonly')
-            self.ComboboxMode.configure(state='readonly')
+            self.ComboboxModel.configure(state='readonly')
             self.CheckButtonTTAMode.configure(state='normal')
         else:
             self.ButtonStart.configure(state='disabled')
+            self.ComboboxScale.configure(state='disabled')
             self.ComboboxFormat.configure(state='disabled')
-            self.ComboboxMode.configure(state='disabled')
+            self.ComboboxModel.configure(state='disabled')
             self.CheckButtonTTAMode.configure(state='disabled')
 
     def _check_exec(self):
@@ -249,42 +261,3 @@ class RealESRGAN(UiRealESRGAN):
                             )
                     )
             self.TextMessage.configure(state='disabled')
-
-    def _realesrgan(self, cmd_line):
-        try:
-            self._process = Popen(
-                cmd_line, stdout=PIPE, stderr=STDOUT, creationflags=CREATE_NO_WINDOW, encoding='UTF-8'
-                )
-        except OSError as e:
-            self.TextMessage.configure(state='normal')
-            self.TextMessage.insert('end', '\n================================================= \n')
-            self.TextMessage.insert('end', _('realesrgan-ncnn-vulkan failed! \n'))
-            self.TextMessage.insert('end', repr(e))
-            self.TextMessage.insert('end', '\n================================================= \n')
-            self.TextMessage.configure(state='disabled')
-            return None
-
-        try:
-            while self._process.poll() is None:
-                message = self._process.stdout.readline()
-                with self._message_lock:
-                    self._message += message
-            if self._process.returncode:
-                self.TextMessage.configure(state='normal')
-                self.TextMessage.insert('end', '\n================================================= \n')
-                self.TextMessage.insert(
-                        'end',
-                        _(
-                                'Something wrong, the error code is {}.\n'
-                                'Please run the above commandline directly in Terminal,\n'
-                                'check whether it can run correctly.\n'
-                                ).format(self._process.returncode)
-
-                        )
-                self.TextMessage.insert('end', '================================================= \n')
-                self.TextMessage.configure(state='disabled')
-            self._process = None
-        except AttributeError:
-            pass
-        finally:
-            self._enable_widgets()

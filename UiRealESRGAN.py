@@ -6,114 +6,129 @@ import tkinter.ttk as ttk
 class UiRealESRGAN(ttk.Frame):
     def __init__(self, master=None, **kw):
         super(UiRealESRGAN, self).__init__(master, **kw)
+
+        # Top Frame
         self.FrameTop = ttk.Frame(self)
+        ## Title Frame
         self.FrameTitle = ttk.Frame(self.FrameTop)
-        self.LabelIcon = ttk.Label(self.FrameTitle)
+        ## Title Icon
         self.img_realesrgan = tk.PhotoImage(file="realesrgan.png")
-        self.LabelIcon.configure(image=self.img_realesrgan, text="RN")
+        self.LabelIcon = ttk.Label(self.FrameTitle, image=self.img_realesrgan, text="RN")
         self.LabelIcon.pack(side="left")
-        self.LabelTitle = ttk.Label(self.FrameTitle)
-        self.LabelTitle.configure(font="{Arial} 24 {bold}", text="RealESRGAN GUI")
+        ## Title Text
+        self.LabelTitle = ttk.Label(self.FrameTitle, font="{Arial} 24 {bold}", text="RealESRGAN GUI")
         self.LabelTitle.pack(padx="20", side="left")
-        self.FrameTitle.configure(height="200", width="200")
+        ## Title Frame Pack
         self.FrameTitle.pack(padx="20", pady="10", side="left")
+        ## Button Frame
         self.FrameButton = ttk.Frame(self.FrameTop)
-        self.ButtonStart = ttk.Button(self.FrameButton)
-        self.ButtonStart.configure(text=_("Start"))
+        ### Start Button
+        self.ButtonStart = ttk.Button(self.FrameButton, text=_("Start"), command=self.start)
         self.ButtonStart.pack(padx="4", side="left")
-        self.ButtonStart.configure(command=self.start)
-        self.ButtonStop = ttk.Button(self.FrameButton)
-        self.ButtonStop.configure(text=_("Stop"))
-        self.ButtonStop.pack(side="left")
-        self.ButtonStop.configure(command=self.stop)
-        self.FrameButton.configure(height="200", width="200")
+        ### Stop Button
+        self.ButtonStop = ttk.Button(self.FrameButton, text=_("Stop"), command=self.stop)
+        self.ButtonStop.pack(padx="4", side="left")
+        ## Button Frame Pack
         self.FrameButton.pack(padx="20", side="right")
-        self.FrameTop.configure(height="200", width="200")
+        # Top Frame Pack
         self.FrameTop.pack(fill="x", side="top")
-        self.FrameInput = ttk.Labelframe(self)
-        self.EntryInputPath = ttk.Entry(self.FrameInput)
+        
+        # Input Frame
+        self.FrameInput = ttk.Labelframe(self, text=_("Input"))
+        ## Input Path
         self.input_path = tk.StringVar(value="")
-        self.EntryInputPath.configure(textvariable=self.input_path)
+        self.EntryInputPath = ttk.Entry(self.FrameInput, textvariable=self.input_path)
         self.EntryInputPath.pack(
-            expand="true", fill="x", padx="4", pady="4", side="left"
+            expand=True, fill="x", padx="4", pady="4", side="left"
         )
-        self.ButtonInputFile = ttk.Button(self.FrameInput)
-        self.ButtonInputFile.configure(text=_("Select File"))
+        ## Input File Button
+        self.ButtonInputFile = ttk.Button(self.FrameInput, text=_("Select File"), command=self.get_input_file)
         self.ButtonInputFile.pack(padx="4", pady="4", side="left")
-        self.ButtonInputFile.configure(command=self.get_input_file)
-        self.ButtonInputFolder = ttk.Button(self.FrameInput)
-        self.ButtonInputFolder.configure(text=_("Select Folder"))
+        ## Input Folder Button
+        self.ButtonInputFolder = ttk.Button(self.FrameInput, text=_("Select Folder"), command=self.get_input_folder)
         self.ButtonInputFolder.pack(padx="4", pady="4", side="left")
-        self.ButtonInputFolder.configure(command=self.get_input_folder)
-        self.FrameInput.configure(height="200", text=_("Input"), width="200")
+        ## Input Frame Pack
         self.FrameInput.pack(fill="x", padx="4", pady="4", side="top")
-        self.FrameOutput = ttk.Labelframe(self)
-        self.EntryOutputPath = ttk.Entry(self.FrameOutput)
+        # Output Frame
+        self.FrameOutput = ttk.Labelframe(self, text=_("Output"))
+        ## Output Path
         self.output_path = tk.StringVar(value="")
-        self.EntryOutputPath.configure(textvariable=self.output_path)
+        self.EntryOutputPath = ttk.Entry(self.FrameOutput, textvariable=self.output_path)
         self.EntryOutputPath.pack(
-            expand="true", fill="x", padx="4", pady="4", side="left"
+            expand=True, fill="x", padx="4", pady="4", side="left"
         )
-        self.ButtonOutputFile = ttk.Button(self.FrameOutput)
-        self.ButtonOutputFile.configure(text=_("Select File"))
+        ## Output File Button
+        self.ButtonOutputFile = ttk.Button(self.FrameOutput, text=_("Select File"), command=self.set_output_file)
         self.ButtonOutputFile.pack(padx="4", pady="4", side="left")
-        self.ButtonOutputFile.configure(command=self.set_output_file)
-        self.ButtonOutputFolder = ttk.Button(self.FrameOutput)
-        self.ButtonOutputFolder.configure(text=_("Select Folder"))
+        ## Output Folder Button
+        self.ButtonOutputFolder = ttk.Button(self.FrameOutput, text=_("Select Folder"), command=self.set_output_folder)
         self.ButtonOutputFolder.pack(padx="4", pady="4", side="left")
-        self.ButtonOutputFolder.configure(command=self.set_output_folder)
-        self.FrameOutput.configure(height="200", text=_("Output"), width="200")
+        # Output Frame Pack
         self.FrameOutput.pack(fill="x", padx="4", pady="4", side="top")
-        self.FrameOption = ttk.Labelframe(self)
+        
+        # Option Frame
+        self.FrameOption = ttk.Labelframe(self, text=_("Option"))
+        ## Scale Frame
+        self.FrameScale = ttk.Frame(self.FrameOption)
+        self.LabelScale = ttk.Label(self.FrameScale, text=_("Scale"))
+        self.LabelScale.pack(side="left")
+        self.scale = tk.StringVar(value="4")
+        self.ComboboxScale = ttk.Combobox(self.FrameScale, state="readonly", textvariable=self.scale, width=2)
+        self.ComboboxScale.pack(padx=4, pady=4, side="left")
+        self.ComboboxScale.bind("<<ComboboxSelected>>", self.set_scale)
+        self.FrameScale.pack(padx=4, pady=4, side="left")
+        ## Format Frame
         self.FrameFormat = ttk.Frame(self.FrameOption)
-        self.LabelFormat = ttk.Label(self.FrameFormat)
-        self.LabelFormat.configure(text=_("Format"))
+        ### Format Label
+        self.LabelFormat = ttk.Label(self.FrameFormat, text=_("Format"))
         self.LabelFormat.pack(side="left")
-        self.ComboboxFormat = ttk.Combobox(self.FrameFormat)
-        self.format = tk.StringVar(value="")
-        self.ComboboxFormat.configure(
-            state="readonly", textvariable=self.format, width="6"
-        )
+        ### Format Combobox
+        self.format = tk.StringVar()
+        self.ComboboxFormat = ttk.Combobox(self.FrameFormat, state="readonly", textvariable=self.format, width=6)
         self.ComboboxFormat.pack(padx="4", side="left")
-        self.ComboboxFormat.bind("<<ComboboxSelected>>", self.set_format, add="")
-        self.FrameFormat.configure(height="200", width="200")
+        self.ComboboxFormat.bind("<<ComboboxSelected>>", self.set_format)
         self.FrameFormat.pack(padx="4", pady="4", side="left")
-        self.FrameMode = ttk.Frame(self.FrameOption)
-        self.LabelMode = ttk.Label(self.FrameMode)
-        self.LabelMode.configure(text=_("Mode"))
-        self.LabelMode.pack(side="left")
-        self.ComboboxMode = ttk.Combobox(self.FrameMode)
-        self.mode = tk.StringVar(value="")
-        self.ComboboxMode.configure(
-            state="readonly", textvariable=self.mode, width="28"
-        )
-        self.ComboboxMode.pack(padx="4", side="left")
-        self.ComboboxMode.bind("<<ComboboxSelected>>", self.set_mode, add="")
-        self.FrameMode.configure(height="200", width="200")
-        self.FrameMode.pack(padx="12", pady="4", side="left")
-        self.CheckButtonTTAMode = ttk.Checkbutton(self.FrameOption)
-        self.tta_mode = tk.StringVar(value="")
-        self.CheckButtonTTAMode.configure(text=_("TTA Mode"), variable=self.tta_mode)
+        ## Mode Frame
+        self.FrameModel = ttk.Frame(self.FrameOption)
+        ### Mode Label
+        self.LabelModel = ttk.Label(self.FrameModel, text=_("Model"))
+        self.LabelModel.pack(side="left")
+        ### Model Combobox
+        self.model = tk.StringVar()
+        self.ComboboxModel = ttk.Combobox(self.FrameModel, state="readonly", textvariable=self.model, width=28)
+        self.ComboboxModel.pack(padx="4", side="left")
+        self.ComboboxModel.bind("<<ComboboxSelected>>", self.set_model, add="")
+        ## Frame Model Pack
+        self.FrameModel.pack(padx="4", pady="4", side="left")
+        ## Check Button TTA Mode
+        self.tta_mode = tk.IntVar()
+        self.CheckButtonTTAMode = ttk.Checkbutton(
+            self.FrameOption,
+            text=_("TTA Mode"),
+            variable=self.tta_mode,
+            command=self.set_tta_mode)
         self.CheckButtonTTAMode.pack(padx="4", pady="4", side="left")
-        self.CheckButtonTTAMode.configure(command=self.use_tta_mode)
-        self.FrameOption.configure(height="200", text=_("Option"), width="200")
+        # Option Frame Pack
         self.FrameOption.pack(fill="x", padx="4", pady="4", side="top")
-        self.FrameMessage = ttk.Labelframe(self)
+        
+        # Message Frame
+        self.FrameMessage = ttk.Labelframe(self, text=_("Message"))
+        ## Frame Text
         self.FrameText = ttk.Frame(self.FrameMessage)
-        self.TextMessage = tk.Text(self.FrameText)
-        self.TextMessage.configure(font='{Microsoft Yahei Mono} 10 {}', height="10", width="50")
-        self.TextMessage.pack(expand="true", fill="both", side="left")
-        self.ScrollBarMessage = ttk.Scrollbar(self.FrameText)
-        self.ScrollBarMessage.configure(orient="vertical")
-        self.ScrollBarMessage.pack(expand="true", fill="y", side="top")
-        self.FrameText.configure(height="200", width="200")
-        self.FrameText.pack(expand="true", fill="both", padx="4", pady="4", side="top")
-        self.FrameMessage.configure(height="200", text=_("Message"), width="200")
-        self.FrameMessage.pack(
-            expand="true", fill="both", padx="4", pady="4", side="top"
-        )
-        self.configure(height="200", width="200")
-        self.pack(expand="true", fill="both", side="top")
+        ## Text Message
+        self.TextMessage = tk.Text(self.FrameText, font='{Microsoft Yahei Mono} 10 {}', height="10", width=50)
+        self.TextMessage.pack(expand=True, fill="both", side="left")
+        self.ScrollBarMessage = ttk.Scrollbar(self.FrameText, orient="vertical")
+        self.ScrollBarMessage.pack(expand=True, fill="y", side="top")
+        self.TextMessage.configure(yscrollcommand=self.ScrollBarMessage.set)
+        self.ScrollBarMessage.configure(command=self.TextMessage.yview)
+        ## Frame Text Pack
+        self.FrameText.pack(expand=True, fill="both", padx="4", pady="4", side="top")
+        # Frame Message Pack
+        self.FrameMessage.pack(expand=True, fill="both", padx="4", pady="4", side="top")
+        
+        # Self Frame
+        self.pack(expand=True, fill="both", side="top")
 
     def start(self):
         pass
@@ -133,13 +148,16 @@ class UiRealESRGAN(ttk.Frame):
     def set_output_folder(self):
         pass
 
+    def set_scale(self, event=None):
+        pass
+
     def set_format(self, event=None):
         pass
 
-    def set_mode(self, event=None):
+    def set_model(self, event=None):
         pass
 
-    def use_tta_mode(self):
+    def set_tta_mode(self):
         pass
 
 
